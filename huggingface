@@ -1,0 +1,346 @@
+#!/bin/bash
+
+while :
+do
+	echo "INFO:root:Running git pull origin main..."
+	sleep 0.1
+	echo "remote: Enumerating objects: 88, done."
+	sleep 0.05
+	echo "remote: Counting objects: 100% (88/88), done."
+	sleep 0.05
+	echo "remote: Compressing objects: 100% (42/42), done."
+	sleep 0.05
+	echo "remote: Total 88 (delta 46), reused 75 (delta 33), pack-reused 0"
+	sleep 0.05
+	echo "Unpacking objects: 100% (88/88), 15.2KiB | 372.00 KiB/s, done."
+	sleep 0.05
+	echo "From https://github.com/big-ai-startup/project-omega"
+	sleep 0.05
+	echo "   f8a9b2c..1d2e3f4  main       -> origin/main"
+	sleep 0.05
+	echo "Updating f8a9b2c..1d2e3f4"
+	sleep 0.05
+	echo "Fast-forward"
+	echo " src/data/loader.py        | 35 +++++++++-----"
+	echo " src/models/architecture.py| 102 +++++++++++++++++++++++---"
+	echo " src/train_distributed.py  | 80 ++++++++++++++-------"
+	echo " configs/v3.4-final.yaml   | 12 +++"
+	echo " 4 files changed, 189 insertions(+), 40 deletions(-)"
+	sleep 0.2
+
+	echo "INFO:root:Building Docker container 'ai-pipeline:prod-v3.4'..."
+	sleep 0.1
+	echo "Sending build context to Docker daemon  3.125GB"
+	sleep 0.1
+	echo "Step 1/20 : FROM nvidia/pytorch:2.4.1-cuda12.3-cudnn8-devel"
+	echo " ---> 9a9b8c7d6e5f"
+	sleep 0.05
+	echo "Step 2/20 : ENV DEBIAN_FRONTEND=noninteractive"
+	echo " ---> Using cache"
+	echo " ---> f1e2d3c4b5a6"
+	sleep 0.05
+	echo "Step 3/20 : RUN apt-get update && apt-get install -y --no-install-recommends git build-essential ca-certificates"
+	echo " ---> Using cache"
+	echo " ---> g7h8i9j0k1l2"
+	sleep 0.05
+	echo "Step 4/20 : WORKDIR /workspace"
+	echo " ---> Using cache"
+	echo " ---> a1b2c3d4e5f6"
+	sleep 0.05
+	echo "Step 5/20 : COPY requirements.txt ."
+	echo " ---> 1a2b3c4d5e6f"
+	sleep 0.05
+	echo "Step 6/20 : RUN pip install --no-cache-dir --upgrade pip"
+	echo " ---> Running in 3a4b5c6d7e8f"
+	echo " ---> d1e2f3g4h5i6"
+	sleep 0.05
+	echo "Step 7/20 : RUN pip install --no-cache-dir -r requirements.txt"
+	echo " ---> Running in 7j8k9l0m1n2o"
+	sleep 0.1
+	echo "Collecting torch==2.4.1"
+	sleep 0.05
+	echo "Collecting transformers==4.40.1"
+	sleep 0.05
+	echo "Collecting datasets==2.18.0"
+	sleep 0.05
+	echo "Collecting accelerate==0.29.3"
+	sleep 0.05
+	echo "Collecting pandas==2.2.2"
+	sleep 0.05
+	echo "Collecting pyarrow==16.1.0"
+	sleep 0.05
+	echo "Collecting scikit-learn==1.5.0"
+	sleep 0.05
+	echo "Collecting optuna==3.6.1"
+	sleep 0.05
+	echo "Collecting wandb==0.17.0"
+	sleep 0.05
+	echo "Collecting huggingface-hub==0.23.0"
+	sleep 0.05
+	echo "Collecting dask[dataframe]==2024.5.1"
+	sleep 0.05
+	echo "INFO: pip.subprocessor: Successfully installed torch transformers datasets accelerate pandas pyarrow scikit-learn optuna wandb huggingface-hub dask"
+	echo " ---> 9p8q7r6s5t4u"
+	sleep 0.1
+	echo "Step 8/20 : COPY . /workspace"
+	echo " ---> v1w2x3y4z5a6"
+	sleep 0.1
+	echo "Step 9/20 : RUN cd /workspace/src/custom_ops && python setup.py install"
+	echo " ---> Running in b1c2d3e4f5g6"
+	sleep 0.1
+	echo "running install"
+	sleep 0.05
+	echo "running build"
+	sleep 0.05
+	echo "running build_ext"
+	sleep 0.05
+	echo "building 'fused_attention_ops' extension"
+	sleep 0.05
+	echo "x86_64-linux-gnu-gcc -pthread -Wno-unused-result ... -I/usr/local/cuda/include -c src/fused_attn.cpp -o build/temp.linux-x86_64-3.10/fused_attn.o -O3 -std=c++17"
+	sleep 0.05
+	echo "nvcc -I/usr/local/cuda/include -c src/fused_attn_cuda.cu -o build/temp.linux-x86_64-3.10/fused_attn_cuda.o -D__CUDA_NO_HALF_OPERATORS__ ... -O3"
+	sleep 0.05
+	echo "x86_64-linux-gnu-g++ -pthread build/temp.linux-x86_64-3.10/fused_attn.o build/temp.linux-x86_64-3.10/fused_attn_cuda.o -L/usr/local/cuda/lib64 -lcudart -o build/lib.linux-x86_64-3.10/fused_attention_ops.so"
+	sleep 0.05
+	echo "Finished processing dependencies for fused_attention_ops"
+	echo " ---> h1i2j3k4l5m6"
+	sleep 0.1
+	echo "Step 10/20 : ENTRYPOINT [\"/workspace/run.sh\"]"
+	echo " ---> 6n5o4p3q2r1s"
+	sleep 0.1
+	echo "Successfully built 6n5o4p3q2r1s"
+	echo "Successfully tagged ai-pipeline:prod-v3.4"
+	sleep 0.2
+
+	echo "INFO:root:Starting main pipeline execution..."
+	sleep 0.1
+	echo "INFO:dask.distributed:Starting Dask cluster with 32 workers..."
+	sleep 0.1
+	echo "INFO:dask.distributed:Cluster dashboard listening at: http://127.0.0.1:8787"
+	sleep 0.1
+	echo "INFO:root:Loading 1.5TB parquet dataset from 's3://ai-data-lake/raw-logs-2025-10'..."
+	sleep 0.1
+	echo "INFO:root:Applying data cleaning and feature engineering..."
+	sleep 0.1
+	echo "INFO:pandas:Reading 'user_interactions_part_001.parquet' (2.5GB)"
+	sleep 0.05
+	echo "INFO:pandas:Reading 'user_interactions_part_002.parquet' (2.4GB)"
+	sleep 0.05
+	echo "INFO:pandas:Reading 'user_interactions_part_003.parquet' (2.6GB)"
+	sleep 0.05
+	echo "INFO:pandas:Dropping 1,502,345 rows with null 'user_id'."
+	sleep 0.05
+	echo "INFO:pandas:Applying 'normalize_text' to 'query' column... (using 32 cores)"
+	sleep 0.05
+	echo "[Dask Worker 01]: Processing partition 1/128"
+	sleep 0.05
+	echo "[Dask Worker 07]: Processing partition 2/128"
+	sleep 0.05
+	echo "[Dask Worker 15]: Processing partition 3/128"
+	sleep 0.05
+	echo "[Dask Worker 22]: Processing partition 4/128"
+	sleep 0.05
+	echo "INFO:pandas:Feature engineering 'session_length_seconds'..."
+	sleep 0.05
+	echo "INFO:pandas:Feature engineering 'click_through_rate'..."
+	sleep 0.05
+	echo "INFO:pandas:Preprocessing complete. Shape=(850,123,456, 42)"
+	sleep 0.1
+
+	echo "INFO:root:Starting Hyperparameter Optimization with Optuna (100 trials)..."
+	sleep 0.1
+	echo "[I 2025-10-26 02:40:15,633] A new study created in RDB with name: 'llama3-8b-finetune-v4'"
+	sleep 0.05
+	echo "[I 2025-10-26 02:40:17,211] Trial 0 finished with value: 0.8512 and parameters: {'learning_rate': 3.5e-5, 'batch_size': 32, 'warmup_steps': 100}. Best is trial 0 with value: 0.8512."
+	sleep 0.05
+	echo "[I 2025-10-26 02:40:18,950] Trial 1 finished with value: 0.8301 and parameters: {'learning_rate': 5.1e-5, 'batch_size': 64, 'warmup_steps': 500}. Best is trial 0 with value: 0.8512."
+	sleep 0.05
+	echo "[I 2025-10-26 02:40:20,732] Trial 2 finished with value: 0.8599 and parameters: {'learning_rate': 2.2e-5, 'batch_size': 32, 'warmup_steps': 250}. Best is trial 2 with value: 0.8599."
+	sleep 0.05
+	echo "[I 2025-10-26 02:40:22,512] Trial 3 pruned."
+	sleep 0.05
+	echo "[I 2025-10-26 02:40:24,300] Trial 4 finished with value: 0.8614 and parameters: {'learning_rate': 1.9e-5, 'batch_size': 16, 'warmup_steps': 200}. Best is trial 4 with value: 0.8614."
+	sleep 0.05
+	echo "[I 2025-10-26 02:40:26,150] Trial 5 pruned."
+	sleep 0.05
+	echo "[I 2025-10-26 02:40:27,999] Trial 6 finished with value: 0.8605 and parameters: {'learning_rate': 2.0e-5, 'batch_size': 16, 'warmup_steps': 300}. Best is trial 4 with value: 0.8614."
+	sleep 0.05
+	echo "INFO:root:Optuna search complete. Best params: {'learning_rate': 1.9e-5, 'batch_size': 16}"
+	sleep 0.2
+
+	echo "INFO:root:Starting final model training with 'accelerate' on 8 GPUs..."
+	sleep 0.1
+	echo "INFO:accelerate:Setting up process group... DDP backend: NCCL"
+	sleep 0.1
+	echo "INFO:accelerate:Loading model 'meta-llama/Llama-3-8B' (bfloat16)..."
+	sleep 0.1
+	echo "Loading weights: 100%|██████████| 4/4 [00:15<00:00, 3.8s/it]"
+	sleep 0.1
+	echo "INFO:root:Model loaded. Parameters: 8,030,238,720"
+	sleep 0.1
+	echo "INFO:root:Applying LoRA adapters... rank=64, alpha=16"
+	sleep 0.1
+	echo "INFO:root:Trainable parameters: 41,943,040 (0.52%)"
+	sleep 0.1
+	echo "INFO:root:Compiling model with torch.compile(mode='max-autotune')..."
+	sleep 0.2
+	echo "INFO:root:Model compiled. Starting training for 3 epochs."
+	sleep 0.1
+	echo "INFO:wandb:Creating new run 'majestic-moon-198'..."
+	sleep 0.1
+	echo "INFO:wandb:Syncing to https://wandb.ai/big-ai-startup/project-omega"
+	sleep 0.1
+	echo "Epoch 1/3"
+	echo "Training: [   10/21268] | loss: 2.158 | perplexity: 8.65 | lr: 1.05e-6 | 185.2 steps/s | tokens/s: 606900 | vram: 75.2GB"
+	sleep 0.1
+	echo "Training: [   20/21268] | loss: 2.011 | perplexity: 7.47 | lr: 2.10e-6 | 186.1 steps/s | tokens/s: 609801 | vram: 75.3GB"
+	sleep 0.1
+	echo "Training: [   30/21268] | loss: 1.950 | perplexity: 7.03 | lr: 3.15e-6 | 185.9 steps/s | tokens/s: 609122 | vram: 75.3GB"
+	sleep 0.1
+	echo "Training: [   40/21268] | loss: 1.873 | perplexity: 6.51 | lr: 4.20e-6 | 184.5 steps/s | tokens/s: 604533 | vram: 75.4GB"
+	sleep 0.1
+	echo "Training: [   50/21268] | loss: 1.764 | perplexity: 5.83 | lr: 5.25e-6 | 186.0 steps/s | tokens/s: 609450 | vram: 75.4GB"
+	sleep 0.1
+	echo "Training: [  100/21268] | loss: 1.512 | perplexity: 4.53 | lr: 1.05e-5 | 185.7 steps/s | tokens/s: 608466 | vram: 75.5GB"
+	sleep 0.1
+	echo "Training: [  200/21268] | loss: 1.401 | perplexity: 4.06 | lr: 1.90e-5 | 186.3 steps/s | tokens/s: 610431 | vram: 75.5GB"
+	sleep 0.1
+	
+	echo "INFO:root:Checking GPU status..."
+	sleep 0.1
+	echo "+---------------------------------------------------------------------------------------+"
+	echo "| NVIDIA-SMI 545.23.01              Driver Version: 545.23.01    CUDA Version: 12.3     |"
+	echo "|-----------------------------------------+----------------------+----------------------+"
+	echo "| GPU  Name                 Persistence-M | Bus-Id        Disp.A | Volatile Uncorr. ECC |"
+	echo "| Fan  Temp   Perf          Pwr:Usage/Cap |         Memory-Usage | GPU-Util  Compute M. |"
+	echo "|=========================================+======================+======================|"
+	echo "|   0  NVIDIA H100 80GB             On  | 00000000:01:00.0 Off |                    0 |"
+	echo "|  N/A   68C    P0             650W / 700W |    75120MiB / 81920MiB |     99%      Default |"
+	echo "|   1  NVIDIA H100 80GB             On  | 00000000:02:00.0 Off |                    0 |"
+	echo "|  N/A   66C    P0             645W / 700W |    75120MiB / 81920MiB |     98%      Default |"
+	echo "|   2  NVIDIA H100 80GB             On  | 00000000:03:00.0 Off |                    0 |"
+	echo "|  N/A   69C    P0             652W / 700W |    75120MiB / 81920MiB |     99%      Default |"
+	echo "|   3  NVIDIA H100 80GB             On  | 00000000:04:00.0 Off |                    0 |"
+	echo "|  N/A   67C    P0             648W / 700W |    75120MiB / 81920MiB |     98%      Default |"
+	echo "|   4  NVIDIA H100 80GB             On  | 00000000:05:00.0 Off |                    0 |"
+	echo "|  N/A   68C    P0             651W / 700W |    75120MiB / 81920MiB |     99%      Default |"
+	echo "|   5  NVIDIA H100 80GB             On  | 00000000:06:00.0 Off |                    0 |"
+	echo "|  N/A   66C    P0             646W / 700W |    75120MiB / 81920MiB |     98%      Default |"
+	echo "|   6  NVIDIA H100 80GB             On  | 00000000:07:00.0 Off |                    0 |"
+	echo "|  N/A   69C    P0             653W / 700W |    75120MiB / 81920MiB |     99%      Default |"
+	echo "|   7  NVIDIA H100 80GB             On  | 00000000:08:00.0 Off |                    0 |"
+	echo "|  N/A   67C    P0             649W / 700W |    75120MiB / 81920MiB |     98%      Default |"
+	echo "+-----------------------------------------+----------------------+----------------------+"
+	sleep 0.1
+
+	echo "Training: [  500/21268] | loss: 1.310 | perplexity: 3.71 | lr: 1.90e-5 | 185.1 steps/s | tokens/s: 606499 | vram: 75.8GB"
+	sleep 0.1
+	echo "Training: [ 1000/21268] | loss: 1.255 | perplexity: 3.51 | lr: 1.90e-5 | 184.9 steps/s | tokens/s: 605844 | vram: 75.8GB"
+	sleep 0.1
+	echo "Training: [ 2000/21268] | loss: 1.201 | perplexity: 3.32 | lr: 1.89e-5 | 186.2 steps/s | tokens/s: 610098 | vram: 75.9GB"
+	sleep 0.1
+	echo "Training: [ 5000/21268] | loss: 1.189 | perplexity: 3.28 | lr: 1.85e-5 | 186.0 steps/s | tokens/s: 609450 | vram: 76.0GB"
+	sleep 0.1
+	echo "Training: [10000/21268] | loss: 1.153 | perplexity: 3.17 | lr: 1.76e-5 | 185.4 steps/s | tokens/s: 607482 | vram: 76.1GB"
+	sleep 0.1
+	echo "INFO:root:Running evaluation on validation set..."
+	sleep 0.1
+	echo "Validation: 100%|██████████| 1200/1200 [00:15<00:00, 79.5 it/s]"
+	sleep 0.1
+	echo "INFO:root:Epoch 1/3 Summary: train_loss=1.198, val_loss=1.120, val_perplexity=3.06"
+	sleep 0.1
+	echo "INFO:root:Validation perplexity improved. Saving checkpoint..."
+	sleep 0.1
+	echo "INFO:accelerate:Saving model checkpoint to 's3://ai-checkpoints/project-omega/epoch_1_ppl_3.06'"
+	sleep 0.2
+	
+	echo "Epoch 2/3"
+	echo "Training: [10010/21268] | loss: 1.098 | perplexity: 3.00 | lr: 1.76e-5 | 186.1 steps/s | tokens/s: 609765 | vram: 76.1GB"
+	sleep 0.1
+	echo "Training: [10020/21268] | loss: 1.085 | perplexity: 2.96 | lr: 1.76e-5 | 185.8 steps/s | tokens/s: 608784 | vram: 76.1GB"
+	sleep 0.1
+	echo "Training: [15000/21268] | loss: 1.077 | perplexity: 2.94 | lr: 1.61e-5 | 186.4 steps/s | tokens/s: 610752 | vram: 76.2GB"
+	sleep 0.1
+	echo "Training: [20000/21268] | loss: 1.069 | perplexity: 2.91 | lr: 1.45e-5 | 185.8 steps/s | tokens/s: 608784 | vram: 76.2GB"
+	sleep 0.1
+	echo "INFO:root:Running evaluation on validation set..."
+	sleep 0.1
+	echo "Validation: 100%|██████████| 1200/1200 [00:15<00:00, 79.2 it/s]"
+	sleep 0.1
+	echo "INFO:root:Epoch 2/3 Summary: train_loss=1.081, val_loss=1.045, val_perplexity=2.84"
+	sleep 0.1
+	echo "INFO:root:Validation perplexity improved. Saving checkpoint..."
+	sleep 0.1
+	echo "INFO:accelerate:Saving model checkpoint to 's3://ai-checkpoints/project-omega/epoch_2_ppl_2.84'"
+	sleep 0.2
+
+	echo "INFO:root:Running final evaluation on test set..."
+	sleep 0.1
+	echo "INFO:root:Loading test data 'test_set_v4_human_eval.csv' (500k samples)"
+	sleep 0.1
+	echo "INFO:sklearn:Running TfidfVectorizer on 'test_queries' column..."
+	sleep 0.1
+	echo "INFO:sklearn:Fitting 5-fold cross-validation for RandomForestClassifier..."
+	sleep 0.1
+	echo "[Parallel(n_jobs=-1)]: Using backend LokyBackend with 64 concurrent workers."
+	sleep 0.05
+	echo "[Parallel(n_jobs=-1)]: Done   1 tasks      | elapsed:    1.2s"
+	sleep 0.05
+	echo "[Parallel(n_jobs=-1)]: Done   2 tasks      | elapsed:    1.2s"
+	sleep 0.05
+	echo "[Parallel(n_jobs=-1)]: Done   3 tasks      | elapsed:    1.2s"
+	sleep 0.05
+	echo "[Parallel(n_jobs=-1)]: Done   4 tasks      | elapsed:    1.2s"
+	sleep 0.05
+	echo "[Parallel(n_jobs=-1)]: Done  10 tasks      | elapsed:    2.1s"
+	sleep 0.05
+	echo "[Parallel(n_jobs=-1)]: Done  20 tasks      | elapsed:    3.5s"
+	sleep 0.05
+	echo "[Parallel(n_jobs=-1)]: Done  50 tasks      | elapsed:    7.8s"
+	sleep 0.05
+	echo "[Parallel(n_jobs=-1)]: Done 100 out of 100 | elapsed:   14.2s finished"
+	sleep 0.1
+	echo "INFO:sklearn:Classification Report:"
+	sleep 0.1
+	echo "              precision    recall  f1-score   support"
+	sleep 0.05
+	echo ""
+	sleep 0.05
+	echo "    class_0       0.92      0.90      0.91    100123"
+	sleep 0.05
+	echo "    class_1       0.88      0.89      0.88     95045"
+	sleep 0.05
+	echo "    class_2       0.95      0.96      0.95    150980"
+	sleep 0.05
+	echo "    class_3       0.90      0.91      0.90    103852"
+	sleep 0.05
+	echo "    class_4       0.98      0.99      0.98     50000"
+	sleep 0.05
+	echo ""
+	sleep 0.05
+	echo "   accuracy                           0.93    500000"
+	sleep 0.05
+	echo "  macro avg       0.93      0.93      0.93    500000"
+	sleep 0.05
+	echo "weighted avg      0.93      0.93      0.93    500000"
+	sleep 0.1
+	
+	echo "INFO:root:Training finished. Merging LoRA weights..."
+	sleep 0.1
+	echo "INFO:root:Pushing final model to Hugging Face Hub 'big-ai-startup/project-omega-llama3-8b-finetuned'..."
+	sleep 0.1
+	echo "Uploading 'model-00001-of-00004.safetensors': 100%|██████████| 4.98G/4.98G [00:30<00:00, 165MB/s]"
+	sleep 0.1
+	echo "Uploading 'model-00002-of-00004.safetensors': 100%|██████████| 4.99G/4.99G [00:31<00:00, 163MB/s]"
+	sleep 0.1
+	echo "Uploading 'model-00003-of-00004.safetensors': 100%|██████████| 4.99G/4.99G [00:30<00:00, 164MB/s]"
+	sleep 0.1
+	echo "Uploading 'model-00004-of-00004.safetensors': 100%|██████████| 3.07G/3.07G [00:19<00:00, 159MB/s]"
+	sleep 0.1
+	echo "Uploading 'README.md': 100%|██████████| 5.2k/5.2k [00:00<00:00, 1.2MB/s]"
+	sleep 0.1
+	echo "INFO:root:Model push complete."
+	sleep 0.1
+	echo "INFO:root:Pipeline finished. Restarting in 10 seconds..."
+	sleep 10
+done
